@@ -4,6 +4,7 @@ import shutil
 def get_pokemons(url = "http://pokeapi.co/api/v2/pokemon-form/", offset=0):
     args = {'offset': offset} if offset else {}
 
+# test
     response = requests.get(url, params=args)
 
     if response.status_code == 200:
