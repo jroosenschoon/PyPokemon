@@ -1,82 +1,37 @@
-import requests
-import shutil
-
-def get_pokemons(url = "http://pokeapi.co/api/v2/pokemon-form/", offset=0):
-    args = {'offset': offset} if offset else {}
-
-    response = requests.get(url, params=args)
-
-    if response.status_code == 200:
-        payload = response.json()
-        results = payload.get('results', [])
-        next    = payload.get('next', [])
-        # print(next)
-        if results:
-            for r in results:
-                print(r['name'], ": ", r['url'])
-        if next != None:
-            get_pokemons(offset=offset+20)
+import pygame as pg
+import sys as s
+import poke as p
+import io
+from urllib.request import urlopen
 
 
-def get_poke_info(poke_name="", poke_id=-1):
-    if poke_id == -1 and poke_name == "":
-        print("Please specify a pokemon name or id.")
-        return
-    if poke_name != "":
-        url = "https://pokeapi.co/api/v2/pokemon/" + poke_name
-        response = requests.get(url)
+pg.init()
 
-        if response.status_code == 200:
-            payload = response.json()
+screen = pg.display.set_mode((600, 800))
+pg.display.set_caption("Pokedex")
 
-            for k, v in payload.items():
-                if k!= 'moves':
-                    print(k, ":", v)
-    elif poke_id != -1:
-        url = "http://pokeapi.co/api/v2/pokemon/" + poke_id
-        response = requests.get(url)
+img = p.get_poke_image("sandshrew")
 
-        if response.status_code == 200:
-            payload = response.json()
+image_str = urlopen(img).read()
 
-            for k, v in payload.items():
-                if k!= 'moves':
-                    print(k, ":", v)
+image_file = io.BytesIO(image_str)
 
-def get_poke_images(poke_name="", poke_id=-1):
-    if poke_id == -1 and poke_name == "":
-        print("Please specify a pokemon name or id.")
-        return
-    if poke_name != "":
-        url = "https://pokeapi.co/api/v2/pokemon/" + poke_name
-        response = requests.get(url)
 
-        if response.status_code == 200:
-            payload = response.json()
-            # print(payload)
-            name=""
-            for k, v in payload.items():
-                if k == 'name':
-                    name = v
-                if k == 'sprites':
-                    count = 0
-                    for sprite, u in v.items():
-                        if u:
-                            print(sprite, ":", u)
-                            file_type = u.split("/")[-1]
-                            filename = name + str(count) +"_"+ file_type
-                            count += 1
-                            r = requests.get(u, stream = True)
-                            if r.status_code == 200:
-                                # Set decode_content value to True, otherwise the downloaded image file's size will be zero.
-                                r.raw.decode_content = True
 
-                                # Open a local file with wb ( write binary ) permission.
-                                with open(filename,'wb') as f:
-                                    shutil.copyfileobj(r.raw, f)
 
-# get_pokemons()
+py_img = pg.image.load(image_file)
 
-get_poke_info("1")
+pg.display.set_icon(pg.image.load("icon.png"))
 
-# get_poke_images(poke_name="bulbasaur")
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            s.exit()
+        if event.type == pg.MOUSEBUTTONDOWN:
+            pg.display.set_icon(pg.image.load("blue_01.png"))
+
+
+
+    screen.blit(py_img, py_img.get_rect())
+
+    pg.display.flip()
