@@ -61,7 +61,6 @@ def get_poke_info(poke_name="", poke_id = -1):
 
             poke_info['id'] = payload['id']
 
-
         else:
             print("Error " + str(response.status_code) + ". Pokemon not found.")
 
