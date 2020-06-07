@@ -38,7 +38,7 @@ def get_poke_info(poke_name="", poke_id = -1):
             payload = response.json()
             for k, v in payload.items():
                 print(k)
-            # pp.pprint(payload['moves'])
+            pp.pprint(payload['abilities'])
             poke_info['weight']   = payload['weight']
             poke_info['height']   = payload['height']
             poke_info['hp']       = payload['stats'][-1]['base_stat']
@@ -48,6 +48,16 @@ def get_poke_info(poke_name="", poke_id = -1):
             poke_info['types']    = []
             for t in payload['types']:
                 poke_info['types'].append(t['type']['name'])
+
+            des = ""
+            for a in payload['abilities']:
+                if response.status_code == 200:
+                    payload = response.json()
+
+                    des = payload['effect_entries'][1]
+
+                poke_info['ability'] = {'name': a['ability']['name'], 'descr': des}
+                response = requests.get(a['ability']['url'])
 
             poke_info['id'] = payload['id']
 
