@@ -50,14 +50,17 @@ def get_poke_info(poke_name="", poke_id = -1):
                 poke_info['types'].append(t['type']['name'])
 
             des = ""
+            poke_info['abilities'] = {}
             for a in payload['abilities']:
+                response = requests.get(a['ability']['url'])
                 if response.status_code == 200:
                     payload = response.json()
 
-                    des = payload['effect_entries'][1]
+                    if payload['effect_entries'][1]:
+                        des = payload['effect_entries'][1]['short_effect']
 
-                poke_info['ability'] = {'name': a['ability']['name'], 'descr': des}
-                response = requests.get(a['ability']['url'])
+                poke_info['abilities'][a['ability']['name']] = des
+
 
             poke_info['id'] = payload['id']
 

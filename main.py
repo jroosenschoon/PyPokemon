@@ -53,6 +53,8 @@ left_padding = 10
 
 bg = pg.image.load("oldpaper.jpg")
 
+ability_rect = pg.Rect(left_padding, 200, screen_rect.width/2 - left_padding*2, 150)
+
 while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -158,7 +160,37 @@ while True:
         height_surf = font.render("Height : {:.2f} feet".format(info['height']/10*3.28084), True, (255, 255, 255))
         screen.blit(height_surf, (left_padding+py_img_rect.width-4, py_img_rect.top+95))
 
-        print(info['abilities'])
+        # Abilities
+        # 154
+        # print(info['abilities'])
+        pg.draw.rect(screen, (207, 252, 255), ability_rect)
+        y = 200
+        for ability in info['abilities']:
+
+            size = font.size(ability)  # (width, height)
+            init_x = left_padding + 10
+
+            mouse_pos = pg.mouse.get_pos()
+
+            if mouse_pos[0] > init_x and mouse_pos[0] < init_x + size[0] and mouse_pos[1] > y and mouse_pos[1] < y+size[1]:
+                a_surf = font.render(ability, True, (255, 103, 34))
+                # Convert sentence to list of words
+                # Make top_surf the first half of the words
+                # Make bottom_suf the last half of the words
+                words_list = ability.split()
+                top_txt = ""
+                for i in range(round(len(words_list)/2)):
+                    top_txt += words_list[i] + " "
+
+                a_info_surf = small_font.render(top_txt, True, (0, 0, 0))
+                screen.blit(a_info_surf, (init_x, y+75))
+            else:
+                a_surf = font.render(ability, True, (0, 0, 0))
+
+            screen.blit(a_surf, (init_x, y))
+
+
+            y += 50
 
 
     pg.display.flip()
