@@ -44,7 +44,7 @@ def get_poke_info(poke_name="", poke_id = -1):
             poke_info['hp']       = payload['stats'][-1]['base_stat']
             poke_info['attack']   = payload['stats'][-2]['base_stat']
             poke_info['defense']  = payload['stats'][-3]['base_stat']
-
+            poke_info['id'] = payload['id']
             poke_info['types']    = []
             for t in payload['types']:
                 poke_info['types'].append(t['type']['name'])
@@ -62,12 +62,18 @@ def get_poke_info(poke_name="", poke_id = -1):
                 poke_info['abilities'][a['ability']['name']] = des
 
 
-            poke_info['id'] = payload['id']
+            url = "https://pokeapi.co/api/v2/pokemon-species/" + str(poke_info['id']) + "/"
+            response = requests.get(url)
+            if response.status_code == 200:
+                payload = response.json()
+
+                poke_info['desc'] = payload['flavor_text_entries'][0]['flavor_text']
 
         else:
             print("Error " + str(response.status_code) + ". Pokemon not found.")
 
         return poke_info
+
 
 def get_poke_image(name):
     name = name.lower()

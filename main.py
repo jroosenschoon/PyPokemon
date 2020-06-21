@@ -26,6 +26,9 @@ type_colors = {
 }
 
 
+
+
+
 pg.init()
 
 screen = pg.display.set_mode((600, 800))
@@ -150,8 +153,30 @@ while True:
                 t_rect.x = left_padding+t_surf.get_rect().width
                 t_rect.y = left_padding * 2 + 32
                 screen.blit(type_surf, t_rect)
-
         type_txt = type_txt[:-2]
+
+        # Description
+        desc = info['desc']
+        if len(desc) < 20:
+            desc_surf = font.render(desc, True, (0, 0, 0))
+            screen.blit(desc_surf, (left_padding, left_padding * 5 + 32))
+        else:
+            desc = desc.split()
+            top_txt = ""
+            bot_txt = ""
+            for i in range(int(len(desc)/2)):
+                top_txt += desc[i] + " "
+            for i in range(int(len(desc)/2), len(desc)):
+                bot_txt += desc[i] + " "
+            top_surf = font.render(top_txt, True, (0, 0, 0))
+            bot_surf = font.render(bot_txt, True, (0, 0, 0))
+            screen.blit(top_surf, (left_padding, left_padding * 5 + 32))
+            screen.blit(bot_surf, (left_padding, left_padding * 8 + 32))
+
+
+
+
+
 
         # Weight/Height
         # print(info['weight'], info['height'])
@@ -174,16 +199,26 @@ while True:
 
             if mouse_pos[0] > init_x and mouse_pos[0] < init_x + size[0] and mouse_pos[1] > y and mouse_pos[1] < y+size[1]:
                 a_surf = font.render(ability, True, (255, 103, 34))
-                # Convert sentence to list of words
-                # Make top_surf the first half of the words
-                # Make bottom_suf the last half of the words
-                words_list = ability.split()
+
+                # If num character < THRESHOLD:
+                #   one line
+                # Else two lines
+
+                words_list = info["abilities"][ability].split()
                 top_txt = ""
+                bot_txt = ""
                 for i in range(round(len(words_list)/2)):
                     top_txt += words_list[i] + " "
+                for i in range(round(len(words_list)/2), len(words_list)):
+                    bot_txt += words_list[i] + " "
 
                 a_info_surf = small_font.render(top_txt, True, (0, 0, 0))
                 screen.blit(a_info_surf, (init_x, y+75))
+
+                a_info_surf = small_font.render(bot_txt, True, (0, 0, 0))
+                screen.blit(a_info_surf, (init_x, y + 100))
+
+
             else:
                 a_surf = font.render(ability, True, (0, 0, 0))
 
